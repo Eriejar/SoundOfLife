@@ -24,6 +24,8 @@ listener.positionX.value = posX;
 listener.positionY.value = posY;
 listener.positionZ.value = posZ-5;
 
+const masterGainNode = audioContext.createGain();
+
 // Setting up panner node
 
 function createPanner() {
@@ -191,7 +193,12 @@ fetchSample('GiantCave.wav').then(convolverBuffer => {
 
     let convolver = audioContext.createConvolver();
     convolver.buffer = convolverBuffer;
-    convolver.connect(audioContext.destination);
+    
+
+    convolver.connect(masterGainNode);
+    masterGainNode.connect(audioContext.destination);
+
+    masterGainNode.gain.value = dbToRatio(-20);
     
     startLoop('Choir', 'F5', convolver, 19.7, 4.0);
     startLoop('Kalimba', 'Ab4',convolver,  17.8, 8.1);
@@ -201,3 +208,16 @@ fetchSample('GiantCave.wav').then(convolverBuffer => {
     startLoop('Kalimba', 'F5',  convolver, 20.0, 14.1);
     startLoop('Kalimba', 'Ab5',convolver,  17.7, 3.1);
 });
+
+function dbToRatio(db) {
+    return 10 ** (db / 20);
+}
+
+var slider = document.getElementById("volumeSlider");
+var output = document.getElementById("demo");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+    output.innerHTML = slider.value;
+    masterGainNode.gain.value = dbToRatio(slider.value);
+}

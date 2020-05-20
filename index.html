@@ -5,16 +5,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/1.0.0/fetch.min.js"></script>
   
 
-  <button id="play">Play!</button>
+  <!-- <button id="play">Play!</button> -->
   <script
   src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
 
-  <div id="horizontalSlider">
-    <input class = "bar" type = "range" id ="rangeinput" min = "-1000" max = "1000" value = "0" onchange = "updateSlider(this.value)"/>
-    <span class = "highlight"> </span>
-    <output id = "rangevalue"> 0 </output>
+  <div id="slidecontainer">
+    <input class = "slider" type = "range" id ="volumeSlider" min = "-30" max = "30" value = "-20"/>
+    <p>DB: <span id="demo"></span></p>
   </div>
 
   <script src="musicforairports.js"></script>
