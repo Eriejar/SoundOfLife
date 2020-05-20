@@ -189,25 +189,28 @@ const play = () => {
 } */
 
 
-fetchSample('GiantCave.wav').then(convolverBuffer => {
+function play() {
+    fetchSample('GiantCave.wav').then(convolverBuffer => {
 
-    let convolver = audioContext.createConvolver();
-    convolver.buffer = convolverBuffer;
+        let convolver = audioContext.createConvolver();
+        convolver.buffer = convolverBuffer;
+        
     
-
-    convolver.connect(masterGainNode);
-    masterGainNode.connect(audioContext.destination);
-
-    masterGainNode.gain.value = dbToRatio(-20);
+        convolver.connect(masterGainNode);
+        masterGainNode.connect(audioContext.destination);
     
-    startLoop('Choir', 'F5', convolver, 19.7, 4.0);
-    startLoop('Kalimba', 'Ab4',convolver,  17.8, 8.1);
-    startLoop('Choir', 'C5',  convolver, 21.3, 5.6);
-    startLoop('Kalimba', 'Db5',convolver,  22.1, 12.6);
-    startLoop('Kalimba', 'Eb5',convolver,  18.4, 9.2);
-    startLoop('Kalimba', 'F5',  convolver, 20.0, 14.1);
-    startLoop('Kalimba', 'Ab5',convolver,  17.7, 3.1);
-});
+        masterGainNode.gain.value = dbToRatio(-20);
+        
+        startLoop('Choir', 'F5', convolver, 19.7, 4.0);
+        startLoop('Kalimba', 'Ab4',convolver,  17.8, 8.1);
+        startLoop('Choir', 'C5',  convolver, 21.3, 5.6);
+        startLoop('Kalimba', 'Db5',convolver,  22.1, 12.6);
+        startLoop('Kalimba', 'Eb5',convolver,  18.4, 9.2);
+        startLoop('Kalimba', 'F5',  convolver, 20.0, 14.1);
+        startLoop('Kalimba', 'Ab5',convolver,  17.7, 3.1);
+    });
+}
+
 
 function dbToRatio(db) {
     return 10 ** (db / 20);
@@ -221,3 +224,7 @@ slider.oninput = function() {
     output.innerHTML = slider.value;
     masterGainNode.gain.value = dbToRatio(slider.value);
 }
+
+var button = document.getElementById("play");
+
+button.onclick = play;
