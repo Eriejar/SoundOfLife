@@ -3,20 +3,29 @@
 <body>
   <script src="https://cdn.rawgit.com/mohayonao/web-audio-api-shim/master/build/web-audio-api-shim.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/1.0.0/fetch.min.js"></script>
-  
-
-  <button id="toggle">Play!</button>
+  <script type="text/javascript" src="node_modules/paper/dist/paper-core.js"></script>
   <script
   src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
 
+
+  <button id="toggle">Play!</button>
+  
   <div id="slidecontainer">
     <input class = "slider" type = "range" id ="volumeSlider" min = "-30" max = "30" value = "-20"/>
     <p>DB: <span id="demo"></span></p>
   </div>
 
+  <canvas id="canvas" height="800px" width="800px"></canvas>
+  <br>
+  <button id="play">Play</button>
+  <button id="pause">Pause</button>
+  <button id="clear">Clear Board</button>
+  <button id="debug_button">Debug</button>
+
   <script src="musicforairports.js"></script>
+  <script src="gameoflife.js"></script>
 
 </body>
 </html>

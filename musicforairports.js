@@ -1,4 +1,5 @@
 
+playing = false;
 
 const SAMPLE_LIBRARY = {
     'Kalimba': [
@@ -161,33 +162,6 @@ function startLoop(instrument, note, destination, loopLengthSeconds, delaySecond
     );
 }
 
-/*
-const audio = new Audio(SAMPLE_LIBRARY['Kalimba'][0].file);
-
-c_file = SAMPLE_LIBRARY['Kalimba'][0].file;
-
-const audioCtx = new AudioContext();
-let buffer = null;
-
-const load = () => {
-    const request = new XMLHttpRequest();
-    request.open("GET", c_file);
-    request.responseType = "arraybuffer";
-    request.onload = function() {
-        let undecodedAudio = request.response;
-        audioCtx.decodeAudioData(undecodedAudio, (data) => buffer = data);
-    };
-    request.send();
-}
-
-const play = () => {
-    const source = audioCtx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(audioCtx.destination);
-    source.start();
-} */
-
-
 fetchSample('GiantCave.wav').then(convolverBuffer => {
 
     let convolver = audioContext.createConvolver();
@@ -208,7 +182,6 @@ fetchSample('GiantCave.wav').then(convolverBuffer => {
     startLoop('Kalimba', 'Ab5',convolver,  17.7, 3.1);
 });
 
-playing = false;
 
 function toggle() {
     if (playing) {
