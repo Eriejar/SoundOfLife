@@ -1,4 +1,4 @@
-
+started = false;
 playing = false;
 
 const SAMPLE_LIBRARY = {
@@ -162,26 +162,28 @@ function startLoop(instrument, note, destination, loopLengthSeconds, delaySecond
     );
 }
 
-fetchSample('GiantCave.wav').then(convolverBuffer => {
+function startAirport() {
+    started = 1;
+    fetchSample('GiantCave.wav').then(convolverBuffer => {
 
-    let convolver = audioContext.createConvolver();
-    convolver.buffer = convolverBuffer;
-    
+        let convolver = audioContext.createConvolver();
+        convolver.buffer = convolverBuffer;
+        
 
-    convolver.connect(masterGainNode);
-    // masterGainNode.connect(audioContext.destination);
+        convolver.connect(masterGainNode);
+        // masterGainNode.connect(audioContext.destination);
 
-    masterGainNode.gain.value = dbToRatio(-20);
-    
-    startLoop('Choir', 'F5', convolver, 19.7, 4.0);
-    startLoop('Kalimba', 'Ab4',convolver,  17.8, 8.1);
-    startLoop('Choir', 'C5',  convolver, 21.3, 5.6);
-    startLoop('Kalimba', 'Db5',convolver,  22.1, 12.6);
-    startLoop('Kalimba', 'Eb5',convolver,  18.4, 9.2);
-    startLoop('Kalimba', 'F5',  convolver, 20.0, 14.1);
-    startLoop('Kalimba', 'Ab5',convolver,  17.7, 3.1);
-});
-
+        masterGainNode.gain.value = dbToRatio(-20);
+        
+        startLoop('Choir', 'F5', convolver, 19.7, 4.0);
+        startLoop('Kalimba', 'Ab4',convolver,  17.8, 8.1);
+        startLoop('Choir', 'C5',  convolver, 21.3, 5.6);
+        startLoop('Kalimba', 'Db5',convolver,  22.1, 12.6);
+        startLoop('Kalimba', 'Eb5',convolver,  18.4, 9.2);
+        startLoop('Kalimba', 'F5',  convolver, 20.0, 14.1);
+        startLoop('Kalimba', 'Ab5',convolver,  17.7, 3.1);
+    });
+}
 
 function toggle() {
     if (playing) {
@@ -192,6 +194,10 @@ function toggle() {
     }
     else {
         console.log("connecting");
+        if (!started) {
+            startAirport();
+        }
+
         masterGainNode.connect(audioContext.destination);
         document.getElementById("toggle").innerHTML = "Pause";
         playing = true;
