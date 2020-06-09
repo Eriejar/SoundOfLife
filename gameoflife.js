@@ -1,6 +1,6 @@
 const field_size = 800;
-const cells_in_row = 16;
-const frames_per_second = 1;
+const cells_in_row = 64;
+var frames_per_second = 1;
 
 const cell_stroke_color = '#aaa'
 const cell_size = field_size / cells_in_row;
@@ -40,6 +40,18 @@ class Cell {
 
 }
 
+class Note {
+    constructor(position) {
+        this.position = position;
+        this.instrument = null;
+        this.pitch = getRandomNote();
+
+        let mapped_location_x = (this.position[0] / cells_in_row) * 3000 - 1500;
+        let mapped_location_z = (this.position[1] / cells_in_row * 3000 - 1500) * -1;
+        this.location = [mapped_location_x, mapped_location_z];
+    }
+}
+
 const get_islands = (grid) => {
     // bool array to mark visited cells
     let visited = new Array(cells_in_row);
@@ -74,8 +86,65 @@ const is_safe = (i, j, grid, visited) => {
             !(visited[i][j]) && grid[i][j].value === 1);
 }
 
+const trigger_island_sound = (island) => {
+
+    let parsed_island = parse_island(island);
+    let notes_to_be_played = new Array(parsed_island.length);
+    console.log(notes_to_be_played);
+    let sounds = ['Kick', 'Snare', 'Closed Hat', 'Open Hat', 'Clink', 'Snap'] // mappings to rows
+    for (let i = 0; i < parsed_island.length; i++) { // columns
+        notes_to_be_played[i] = [];
+        for (let j = 0; j < parsed_island[0].length; j++) { // rows
+            for (const note of parsed_island[i][j]) {
+                if (j > sounds.length - 1) {
+                    note.instrument = null;
+                }
+                else {        
+                    note.instrument = sounds[j];
+                    //note.instrument = `Clink`;
+                }
+                console.log(note);
+                notes_to_be_played[i].push(note);
+            }
+        }
+    }
+
+    sequencer(notes_to_be_played);
+}
+
+const parse_island = (island) => {
+    let top_layer = Math.min(...island.map(function(ele) { return ele[1]}));
+    let bottom_layer = Math.max(...island.map(function(ele) { return ele[1]}));
+    let first_column = Math.min(...island.map(function(ele) { return ele[0]}));
+    let last_column = Math.max(...island.map(function(ele) { return ele[0]}));
+
+    let height = bottom_layer - top_layer + 1;
+    let width = last_column - first_column + 1;
+    let parsed = new Array(width);
+    let cells;
+    let col = 0;
+    for (let i = first_column; i <= last_column; i++) {
+       cells = island.filter(function(ele) {return (ele[0] == i)});
+       parsed[col] = new Array(height); // row size
+       let row = 0;
+
+       let temp;
+       for (let j = bottom_layer; j >= top_layer; j--) {
+           temp = cells.filter(function(ele) {return (ele[1] == j)});
+           parsed[col][row] = temp.map(function(ele) {
+               
+                return new Note(ele)});
+           row += 1;
+       }
+       col += 1;
+    }
+    return parsed;
+}
+
 const destroy_islands = (grid, islands) => {
     
+    
+
     if (islands == undefined) {
         return;
     }
@@ -83,8 +152,9 @@ const destroy_islands = (grid, islands) => {
         for (const coord of island) {
             grid[coord[0]][coord[1]].value = 0;
         }
+        // let the sound commence!
+        trigger_island_sound(island);
     }
-
     return;
 }
 
@@ -123,6 +193,7 @@ const get_new_grid = (random = 0) => {
 }
 
 const get_next_generation = (grid) => {
+
     let next_grid = new Array(grid.length);
     for (let i = 0; i < grid.length; i++) {
         next_grid[i] = new Array(grid.length);
@@ -214,8 +285,55 @@ const check_intersections = (grid) => {
 }
 
 
+const load_seed = () => {
+    let origin = [32,32];
+    let seed = `
+........................O
+......................O.O
+............OO......OO............OO
+...........O...O....OO............OO
+OO........O.....O...OO
+OO........O...O.OO....O.O
+..........O.....O.......O
+...........O...O
+............OO`
+
+    let split_seed = seed.split('\n');
+    let columns = 0;
+    for (const line of split_seed) {
+        if (columns < line.length) {
+            columns = line.length;
+        }
+    }
+    let rows = split_seed.length;
+
+    let top_left = [( origin[0] - Math.floor(rows/2) ) , ( origin[1] - Math.floor(columns/2) )]
+    console.log(top_left);
+    if (top_left[0] < 0) {
+        top_left[0] = 0;
+    }
+    if (top_left[1] < 0) {
+        top_left[1] = 0;
+    }
+
+    let i = top_left[0];
+    let j = top_left[1];
+    for (const line of split_seed) {
+        j = top_left[1];
+        for (const c of line) {
+            if (c == 'O') {
+                NEXT_GRID[j][i].value = 1;
+            }
+            j++;
+        }
+        i++;
+    }
+
+    console.log(split_seed);
+}
+
 const generation = () => {
-    RING = new paper.Path.Circle(new paper.Point(field_size/2, field_size/2), 300);
+    RING = new paper.Path.Circle(new paper.Point(field_size/2, field_size/2), field_size/2*.9);
     RING.strokeColor = 'blue';
     RING.strokeWidth = 4;
 
@@ -224,6 +342,7 @@ const generation = () => {
     draw_grid(NEXT_GRID, RING);
     
     // destroying intersecting islands after displaying
+    //playSample('Kick', 'C4');
     destroy_islands(NEXT_GRID, intersecting_islands);
 
     NEXT_GRID = get_next_generation(NEXT_GRID);
@@ -253,7 +372,6 @@ play_button.onclick = () => {
     if (STATE == 'pause') {
         console.log("Playing");
         STATE = 'playing';
-
         generation();
     }
 }
@@ -278,10 +396,10 @@ canvas.addEventListener('click', function() {
     var x = event.pageX - elem_left,
         y = event.pageY - elem_top;
     
-    console.log('Clicked ', x, ',', y);
+    //console.log('Clicked ', x, ',', y);
     var square_coord = [Math.floor(x / cell_size), Math.floor(y / cell_size) ]
-    console.log(square_coord);
-    console.log(NEXT_GRID[square_coord[0]][square_coord[1]]);
+    //console.log(square_coord);
+    //console.log(NEXT_GRID[square_coord[0]][square_coord[1]]);
 
     var cell = NEXT_GRID[square_coord[0]][square_coord[1]];
     cell.value = 1;
@@ -312,13 +430,25 @@ canvas.onmouseup = function (event) {
     MOUSE_DOWN = false;
 }
 
+var slider = document.getElementById("speedSlider");
+var output = document.getElementById("updateRate");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+    output.innerHTML = slider.value;
+    frames_per_second = slider.value;
+}
+
 window.onload = () => {
     const canvas = document.getElementById('canvas');
     
     paper.setup(canvas);
-    RING = new paper.Path.Circle(new paper.Point(field_size/2, field_size/2), 100);
+    RING = new paper.Path.Circle(new paper.Point(field_size/2, field_size/2), 200);
     RING.fillColor = 'black';
     const grid = get_new_grid(random = 0);
     NEXT_GRID = grid;
+    load_seed();
     generation();
+
+    start_audio_system();
 }
