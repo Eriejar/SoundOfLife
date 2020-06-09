@@ -289,9 +289,9 @@ slider.oninput = function() {
     masterGainNode.gain.value = dbToRatio(DEFAULT_DB);
 }
 
-var button = document.getElementById("toggle");
+// var button = document.getElementById("toggle");
 
-button.onclick = toggle;
+// button.onclick = toggle;
 
 const start_audio_system = () => {
     // console.log("Hello");

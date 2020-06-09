@@ -386,11 +386,12 @@ pause_button.onclick = () => {
     }    
 }
 
+/*
 var debug_button = document.getElementById("debug_button");
 debug_button.onclick = () => {
     console.log("Debug Button");
     // console.log(get_circle_coordinates([25,25], 2));
-}
+} */
 
 canvas.addEventListener('click', function() {
     var x = event.pageX - elem_left,

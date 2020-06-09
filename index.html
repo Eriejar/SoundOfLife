@@ -9,12 +9,13 @@
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
 
-
-  <button id="toggle">Play!</button>
-  
-  <div id="slidecontainer">
-    <input class = "slider" type = "range" id ="volumeSlider" min = "-30" max = "30" value = "-20"/>
-    <p>DB: <span id="demo"></span></p>
+  <div>
+    <p>
+      <br> <br>
+      Music of Life attempts to combine Conway's Game of Life with musical generation and spatialization. <br>
+      The ring below represents the 3-D space around and any islands formed by the game which hits the ring results in a generated <br> sound based on the shape of the island. <br>
+      New shapes can be created by clicking square on the grid.
+    </p>
   </div>
 
   <canvas id="canvas" height="800px" width="800px"></canvas>
@@ -22,10 +23,16 @@
   <button id="play">Play</button>
   <button id="pause">Pause</button>
   <button id="clear">Clear Board</button>
-  <button id="debug_button">Debug</button>
+  <!-- <button id="debug_button">Debug</button> -->
   <div id="slidecontainer">
-    <input class = "slider" type = "range" id ="speedSlider" min = "1" max = "120" value = "1"/>
-    <p>DB: <span id="updateRate"></span></p>
+    <p>Volume (DB): <span id="demo"></span></p>
+    <input class = "slider" type = "range" id ="volumeSlider" min = "-30" max = "30" value = "-20"/>
+    
+  </div>
+  <div id="slidecontainer">
+    <p>FPS: <span id="updateRate"></span></p>
+    <input class = "slider" type = "range" id ="speedSlider" min = "1" max = "30" value = "1"/>
+    
   </div> 
 
   <script src="musicforairports.js"></script>
